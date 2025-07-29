@@ -14,7 +14,7 @@ class TarifController extends Controller
     public function index()
     {
         $data_tarif = Tarif::all();
-        return view('admin.tarif', ['semua_tarif' => $data_tarif]);
+        return view('admin.tarif.index', ['semua_tarif' => $data_tarif]);
     }
 
     /**
@@ -22,7 +22,7 @@ class TarifController extends Controller
      */
     public function create()
     {
-        return view('admin.tarif_create');
+        return view('admin.tarif.create');
     }
 
     /**
@@ -48,7 +48,7 @@ class TarifController extends Controller
      */
     public function edit(Tarif $tarif)
     {
-        return view('admin.tarif_edit', ['tarif' => $tarif]);
+        return view('admin.tarif.edit', ['tarif' => $tarif]);
     }
 
     /**

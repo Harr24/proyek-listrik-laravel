@@ -1,93 +1,65 @@
-<!DOCTYPE html>
-<html lang="id">
+@extends('layouts.admin')
 
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Data Penggunaan</title>
-    <style>
-        body {
-            font-family: sans-serif;
-        }
+@section('title', 'Edit Data Penggunaan')
 
-        .form-group {
-            margin-bottom: 15px;
-        }
+@section('content')
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Edit Data Penggunaan</h1>
+    </div>
 
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
+    <div class="card">
+        <div class="card-body">
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
-        input[type="text"],
-        input[type="number"],
-        select {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-        }
-
-        .btn {
-            padding: 10px 15px;
-            background-color: #ffc107;
-            color: black;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-    </style>
-</head>
-
-<body>
-    <h1>Form Edit Data Penggunaan</h1>
-    <a href="{{ route('admin.penggunaan.index') }}">Kembali ke Daftar Penggunaan</a>
-    <hr>
-
-    @if ($errors->any())
-        <div style="color: red; margin-bottom: 15px;">
-            <strong>Whoops!</strong> Ada beberapa masalah dengan input Anda.<br><br>
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+            <form action="{{ route('admin.penggunaan.update', $penggunaan) }}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="mb-3">
+                    <label for="id_pelanggan" class="form-label">Pilih Pelanggan</label>
+                    <select name="id_pelanggan" id="id_pelanggan" class="form-select" required>
+                        <option value="">-- Pilih Pelanggan --</option>
+                        @foreach ($semua_pelanggan as $pelanggan)
+                            <option value="{{ $pelanggan->id_pelanggan }}" @if($pelanggan->id_pelanggan == old('id_pelanggan', $penggunaan->id_pelanggan)) selected @endif>
+                                {{ $pelanggan->nomor_meter }} - {{ $pelanggan->nama_pelanggan }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="bulan" class="form-label">Bulan</label>
+                        <input type="text" class="form-control" id="bulan" name="bulan"
+                            value="{{ old('bulan', $penggunaan->bulan) }}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="tahun" class="form-label">Tahun</label>
+                        <input type="number" class="form-control" id="tahun" name="tahun"
+                            value="{{ old('tahun', $penggunaan->tahun) }}" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="meter_awal" class="form-label">Meter Awal (KWH)</label>
+                        <input type="number" class="form-control" id="meter_awal" name="meter_awal"
+                            value="{{ old('meter_awal', $penggunaan->meter_awal) }}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="meter_akhir" class="form-label">Meter Akhir (KWH)</label>
+                        <input type="number" class="form-control" id="meter_akhir" name="meter_akhir"
+                            value="{{ old('meter_akhir', $penggunaan->meter_akhir) }}" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Update</button>
+                <a href="{{ route('admin.penggunaan.index') }}" class="btn btn-secondary">Batal</a>
+            </form>
         </div>
-    @endif
-
-    <form action="{{ route('admin.penggunaan.update', $penggunaan) }}" method="POST">
-        @csrf
-        @method('PUT')
-        <div class="form-group">
-            <label for="id_pelanggan">Pilih Pelanggan</label>
-            <select name="id_pelanggan" id="id_pelanggan" required>
-                <option value="">-- Pilih Pelanggan --</option>
-                @foreach ($semua_pelanggan as $pelanggan)
-                    <option value="{{ $pelanggan->id_pelanggan }}" @if($pelanggan->id_pelanggan == old('id_pelanggan', $penggunaan->id_pelanggan)) selected @endif>
-                        {{ $pelanggan->nomor_meter }} - {{ $pelanggan->nama_pelanggan }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="bulan">Bulan</label>
-            <input type="text" id="bulan" name="bulan" value="{{ old('bulan', $penggunaan->bulan) }}" required>
-        </div>
-        <div class="form-group">
-            <label for="tahun">Tahun</label>
-            <input type="number" id="tahun" name="tahun" value="{{ old('tahun', $penggunaan->tahun) }}" required>
-        </div>
-        <div class="form-group">
-            <label for="meter_awal">Meter Awal (KWH)</label>
-            <input type="number" id="meter_awal" name="meter_awal"
-                value="{{ old('meter_awal', $penggunaan->meter_awal) }}" required>
-        </div>
-        <div class="form-group">
-            <label for="meter_akhir">Meter Akhir (KWH)</label>
-            <input type="number" id="meter_akhir" name="meter_akhir"
-                value="{{ old('meter_akhir', $penggunaan->meter_akhir) }}" required>
-        </div>
-        <button type="submit" class="btn">Update Data</button>
-    </form>
-
-</body>
-
-</html>
+    </div>
+@endsection

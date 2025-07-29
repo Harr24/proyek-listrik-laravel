@@ -43,4 +43,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    // relasi one-to-one model pelanggan
+    public function pelanggan()
+    {
+        return $this->hasOne(Pelanggan::class, 'user_id', 'id');
+    }
 }

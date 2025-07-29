@@ -1,35 +1,17 @@
-<!DOCTYPE html>
-<html lang="id">
+@extends('layouts.admin')
 
-<head>
-    <title>Dashboard Admin</title>
-    <style>
-        body {
-            font-family: sans-serif;
-        }
+@section('title', 'Dashboard Admin')
 
-        .nav-link {
-            display: block;
-            margin-bottom: 10px;
-        }
-    </style>
-</head>
+@section('content')
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Dashboard</h1>
+    </div>
 
-<body>
-    <h1>Ini Halaman Dashboard ADMIN</h1>
-    <p>Selamat datang, {{ Auth::user()->name }}!</p>
-    <hr>
-
-    <a href="{{ route('admin.tarif.index') }}" class="nav-link">Kelola Data Tarif</a>
-    <a href="{{ route('admin.pelanggan.index') }}" class="nav-link">Kelola Data Pelanggan</a>
-    <a href="{{ route('admin.penggunaan.index') }}" class="nav-link">Kelola Data Penggunaan</a>
-    <a href="{{ route('admin.tagihan.index') }}" class="nav-link">Kelola Data Tagihan</a>
-    <br>
-
-    <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit">Logout</button>
-    </form>
-</body>
-
-</html>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Selamat Datang, {{ Auth::user()->name }}!</h5>
+            <p class="card-text">Anda berhasil login sebagai Admin. Gunakan menu di samping untuk mengelola data aplikasi.
+            </p>
+        </div>
+    </div>
+@endsection

@@ -10,7 +10,7 @@ class Pelanggan extends Model
     use HasFactory;
 
     /**
-     * Nama tabel (opsional, jika bukan plural dari nama model)
+     * Nama tabel yang terhubung dengan model ini.
      */
     protected $table = 'pelanggans';
 
@@ -20,9 +20,10 @@ class Pelanggan extends Model
     protected $primaryKey = 'id_pelanggan';
 
     /**
-     * Kolom-kolom yang boleh diisi secara massal.
+     * Kolom-kolom yang boleh diisi secara massal (mass assignable).
      */
     protected $fillable = [
+        'user_id', // <-- TAMBAHAN BARU
         'id_tarif',
         'nomor_meter',
         'nama_pelanggan',
@@ -35,5 +36,13 @@ class Pelanggan extends Model
     public function tarif()
     {
         return $this->belongsTo(Tarif::class, 'id_tarif', 'id_tarif');
+    }
+
+    /**
+     * Mendapatkan data user yang memiliki data pelanggan ini (Relasi BelongsTo).
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }

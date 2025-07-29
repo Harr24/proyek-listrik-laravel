@@ -16,7 +16,7 @@ use App\Http\Controllers\Admin\PembayaranController; // baru
 | Web Routes
 |--------------------------------------------------------------------------
 |
-| Di sinilah kita mendaftarkan semua rute untuk aplikasi web kita.
+| Mendaftarkan semua rute untuk aplikasi web kita.
 |
 */
 

@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pelanggan;
-use App\Models\Tarif; // <-- Penting untuk mengambil data tarif
+use App\Models\Tarif;
+use App\Models\User; // <-- TAMBAHAN BARU
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash; // <-- TAMBAHAN BARU
 
 class PelangganController extends Controller
 {
@@ -35,17 +37,35 @@ class PelangganController extends Controller
      */
     public function store(Request $request)
     {
+        // PERUBAHAN DI SINI: Validasi untuk data user dan pelanggan
         $request->validate([
-            'id_tarif' => 'required|exists:tarifs,id_tarif',
-            'nomor_meter' => 'required|string|unique:pelanggans,nomor_meter',
             'nama_pelanggan' => 'required|string|max:255',
+            'nomor_meter' => 'required|string|unique:pelanggans,nomor_meter',
             'alamat' => 'required|string',
+            'id_tarif' => 'required|exists:tarifs,id_tarif',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
-        Pelanggan::create($request->all());
+        // PERUBAHAN DI SINI: Buat user baru terlebih dahulu
+        $user = User::create([
+            'name' => $request->nama_pelanggan,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => 'pelanggan',
+        ]);
+
+        // PERUBAHAN DI SINI: Buat data pelanggan dan hubungkan dengan user_id
+        Pelanggan::create([
+            'user_id' => $user->id, // <-- Ini jembatannya
+            'nama_pelanggan' => $request->nama_pelanggan,
+            'nomor_meter' => $request->nomor_meter,
+            'alamat' => $request->alamat,
+            'id_tarif' => $request->id_tarif,
+        ]);
 
         return redirect()->route('admin.pelanggan.index')
-            ->with('success', 'Data pelanggan berhasil ditambahkan.');
+            ->with('success', 'Data pelanggan baru berhasil ditambahkan.');
     }
 
     /**
@@ -83,6 +103,11 @@ class PelangganController extends Controller
      */
     public function destroy(Pelanggan $pelanggan)
     {
+        // Hapus user terkait terlebih dahulu jika ada
+        if ($pelanggan->user) {
+            $pelanggan->user->delete();
+        }
+
         $pelanggan->delete();
 
         return redirect()->route('admin.pelanggan.index')

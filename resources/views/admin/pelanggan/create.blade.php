@@ -1,91 +1,72 @@
-<!DOCTYPE html>
-<html lang="id">
+@extends('layouts.admin')
 
-<head>
-    <meta charset="UTF-8">
-    <title>Tambah Data Pelanggan</title>
-    <style>
-        body {
-            font-family: sans-serif;
-        }
+@section('title', 'Tambah Data Pelanggan')
 
-        .form-group {
-            margin-bottom: 15px;
-        }
+@section('content')
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Tambah Data Pelanggan</h1>
+    </div>
 
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
+    <div class="card">
+        <div class="card-body">
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
-        input[type="text"],
-        input[type="number"],
-        textarea,
-        select {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-        }
+            <form action="{{ route('admin.pelanggan.store') }}" method="POST">
+                @csrf
+                <div class="mb-3">
+                    <label for="nama_pelanggan" class="form-label">Nama Pelanggan</label>
+                    <input type="text" class="form-control" id="nama_pelanggan" name="nama_pelanggan"
+                        value="{{ old('nama_pelanggan') }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="nomor_meter" class="form-label">Nomor Meter</label>
+                    <input type="text" class="form-control" id="nomor_meter" name="nomor_meter"
+                        value="{{ old('nomor_meter') }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="alamat" class="form-label">Alamat</label>
+                    <textarea class="form-control" id="alamat" name="alamat" rows="3"
+                        required>{{ old('alamat') }}</textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="id_tarif" class="form-label">Jenis Tarif</label>
+                    <select name="id_tarif" id="id_tarif" class="form-select" required>
+                        <option value="">-- Pilih Tarif --</option>
+                        @foreach ($semua_tarif as $tarif)
+                            <option value="{{ $tarif->id_tarif }}">{{ $tarif->daya }} - (Rp
+                                {{ number_format($tarif->tarif_per_kwh) }})</option>
+                        @endforeach
+                    </select>
+                </div>
 
-        .btn {
-            padding: 10px 15px;
-            background-color: #0d6efd;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+                <hr>
+                <h5 class="mb-3">Buat Akun Login untuk Pelanggan</h5>
 
-        .error-message {
-            color: red;
-            font-size: 12px;
-        }
-    </style>
-</head>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email Login</label>
+                    <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password_confirmation" class="form-label">Konfirmasi Password</label>
+                    <input type="password" class="form-control" id="password_confirmation" name="password_confirmation"
+                        required>
+                </div>
 
-<body>
-    <h1>Form Tambah Data Pelanggan</h1>
-    <a href="{{ route('admin.pelanggan.index') }}">Kembali ke Daftar Pelanggan</a>
-    <hr>
-
-    @if ($errors->any())
-        <div style="color: red;">
-            <strong>Whoops!</strong> Ada beberapa masalah dengan input Anda.<br><br>
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+                <a href="{{ route('admin.pelanggan.index') }}" class="btn btn-secondary">Batal</a>
+            </form>
         </div>
-    @endif
-
-    <form action="{{ route('admin.pelanggan.store') }}" method="POST">
-        @csrf
-        <div class="form-group">
-            <label for="nomor_meter">Nomor Meter</label>
-            <input type="text" id="nomor_meter" name="nomor_meter" value="{{ old('nomor_meter') }}" required>
-        </div>
-        <div class="form-group">
-            <label for="nama_pelanggan">Nama Pelanggan</label>
-            <input type="text" id="nama_pelanggan" name="nama_pelanggan" value="{{ old('nama_pelanggan') }}" required>
-        </div>
-        <div class="form-group">
-            <label for="alamat">Alamat</label>
-            <textarea id="alamat" name="alamat" rows="3" required>{{ old('alamat') }}</textarea>
-        </div>
-        <div class="form-group">
-            <label for="id_tarif">Jenis Tarif</label>
-            <select name="id_tarif" id="id_tarif" required>
-                <option value="">-- Pilih Tarif --</option>
-                @foreach ($semua_tarif as $tarif)
-                    <option value="{{ $tarif->id_tarif }}">{{ $tarif->daya }} - (Rp
-                        {{ number_format($tarif->tarif_per_kwh) }})</option>
-                @endforeach
-            </select>
-        </div>
-        <button type="submit" class="btn">Simpan</button>
-    </form>
-
-</body>
-
-</html>
+    </div>
+@endsection
