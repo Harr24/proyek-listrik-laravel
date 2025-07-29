@@ -48,7 +48,6 @@ class TarifController extends Controller
      */
     public function edit(Tarif $tarif)
     {
-        // Laravel otomatis menemukan data tarif berdasarkan ID di URL
         return view('admin.tarif_edit', ['tarif' => $tarif]);
     }
 
@@ -57,19 +56,28 @@ class TarifController extends Controller
      */
     public function update(Request $request, Tarif $tarif)
     {
-        // Validasi data
         $request->validate([
             'daya' => 'required|string|max:50',
             'tarif_per_kwh' => 'required|integer|min:0',
         ]);
 
-        // Update data di database
         $tarif->update([
             'daya' => $request->daya,
             'tarif_per_kwh' => $request->tarif_per_kwh,
         ]);
 
-        // Kembali ke halaman daftar tarif dengan pesan sukses
         return redirect()->route('admin.tarif.index')->with('success', 'Data tarif berhasil diubah.');
+    }
+
+    /**
+     * Menghapus data tarif dari database.
+     */
+    public function destroy(Tarif $tarif)
+    {
+        // Hapus data dari database
+        $tarif->delete();
+
+        // Kembali ke halaman daftar tarif dengan pesan sukses
+        return redirect()->route('admin.tarif.index')->with('success', 'Data tarif berhasil dihapus.');
     }
 }

@@ -38,8 +38,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/tarif', [TarifController::class, 'index'])->name('tarif.index');
         Route::get('/tarif/create', [TarifController::class, 'create'])->name('tarif.create');
         Route::post('/tarif', [TarifController::class, 'store'])->name('tarif.store');
-        Route::get('/tarif/{tarif}/edit', [TarifController::class, 'edit'])->name('tarif.edit'); // <-- TAMBAHKAN INI
-        Route::put('/tarif/{tarif}', [TarifController::class, 'update'])->name('tarif.update'); // <-- DAN INI
+        Route::get('/tarif/{tarif}/edit', [TarifController::class, 'edit'])->name('tarif.edit');
+        Route::put('/tarif/{tarif}', [TarifController::class, 'update'])->name('tarif.update');
+        Route::delete('/tarif/{tarif}', [TarifController::class, 'destroy'])->name('tarif.destroy'); // <-- TAMBAHKAN INI
     });
 
     // --- RUTE KHUSUS PELANGGAN ---

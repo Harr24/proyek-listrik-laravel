@@ -26,6 +26,10 @@
             color: white;
             text-decoration: none;
             border-radius: 3px;
+            font-family: sans-serif;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
         }
 
         .btn-add {
@@ -84,7 +88,14 @@
                     <td>
                         <a href="{{ route('admin.tarif.edit', $tarif->id_tarif) }}" class="btn btn-edit">Edit</a>
 
-                        <a href="#" class="btn btn-delete">Hapus</a>
+                        {{-- PERUBAHAN DI SINI --}}
+                        <form action="{{ route('admin.tarif.destroy', $tarif->id_tarif) }}" method="POST"
+                            style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-delete"
+                                onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Hapus</button>
+                        </form>
                     </td>
                 </tr>
             @empty
