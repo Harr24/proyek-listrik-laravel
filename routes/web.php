@@ -6,14 +6,17 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Pelanggan\DashboardController as PelangganDashboardController;
 use App\Http\Controllers\Admin\TarifController;
 use App\Http\Controllers\Admin\PelangganController;
-use App\Http\Controllers\Admin\PenggunaanController; // <-- TAMBAHKAN INI
+use App\Http\Controllers\Admin\PenggunaanController;
+use App\Http\Controllers\Admin\TagihanController;
+use App\Http\Controllers\Admin\PembayaranController; // baru
+
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 |
-| mendaftarkan semua rute untuk aplikasi web kita.
+| Di sinilah kita mendaftarkan semua rute untuk aplikasi web kita.
 |
 */
 
@@ -43,7 +46,15 @@ Route::middleware('auth')->group(function () {
         Route::resource('pelanggan', PelangganController::class)->except(['show']);
 
         // Rute untuk mengelola penggunaan
-        Route::resource('penggunaan', PenggunaanController::class)->except(['show']); // <-- TAMBAHKAN INI
+        Route::resource('penggunaan', PenggunaanController::class)->except(['show']);
+
+        // Rute untuk mengelola tagihan
+        Route::get('/tagihan', [TagihanController::class, 'index'])->name('tagihan.index');
+        Route::post('/tagihan/generate/{penggunaan}', [TagihanController::class, 'generate'])->name('tagihan.generate');
+
+        // Rute Verifikasi Pembayaran
+        Route::get('/pembayaran/verify/{tagihan}', [PembayaranController::class, 'create'])->name('pembayaran.create');
+        Route::post('/pembayaran/store', [PembayaranController::class, 'store'])->name('pembayaran.store');
     });
 
     // --- RUTE KHUSUS PELANGGAN ---

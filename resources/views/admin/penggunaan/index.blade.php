@@ -49,11 +49,25 @@
             background-color: #dc3545;
         }
 
+        .btn-generate {
+            background-color: #198754;
+            /* Warna baru untuk tombol generate */
+        }
+
         .alert-success {
             padding: 15px;
             background-color: #d4edda;
             color: #155724;
             border: 1px solid #c3e6cb;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        .alert-error {
+            padding: 15px;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
             border-radius: 4px;
             margin-bottom: 15px;
         }
@@ -74,6 +88,11 @@
     @if (session('success'))
         <div class="alert-success">
             {{ session('success') }}
+        </div>
+    @endif
+    @if (session('error'))
+        <div class="alert-error">
+            {{ session('error') }}
         </div>
     @endif
 
@@ -97,7 +116,14 @@
                     <td>{{ $penggunaan->meter_awal }}</td>
                     <td>{{ $penggunaan->meter_akhir }}</td>
                     <td>
+                        {{-- Tombol Generate Tagihan --}}
+                        <form action="{{ route('admin.tagihan.generate', $penggunaan) }}" method="POST" class="action-form">
+                            @csrf
+                            <button type="submit" class="btn btn-generate">Generate Tagihan</button>
+                        </form>
+
                         <a href="{{ route('admin.penggunaan.edit', $penggunaan) }}" class="btn btn-edit">Edit</a>
+
                         <form action="{{ route('admin.penggunaan.destroy', $penggunaan) }}" method="POST"
                             class="action-form">
                             @csrf

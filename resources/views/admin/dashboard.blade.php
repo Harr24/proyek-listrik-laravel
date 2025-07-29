@@ -23,6 +23,7 @@
     <a href="{{ route('admin.tarif.index') }}" class="nav-link">Kelola Data Tarif</a>
     <a href="{{ route('admin.pelanggan.index') }}" class="nav-link">Kelola Data Pelanggan</a>
     <a href="{{ route('admin.penggunaan.index') }}" class="nav-link">Kelola Data Penggunaan</a>
+    <a href="{{ route('admin.tagihan.index') }}" class="nav-link">Kelola Data Tagihan</a>
     <br>
 
     <form method="POST" action="{{ route('logout') }}">
