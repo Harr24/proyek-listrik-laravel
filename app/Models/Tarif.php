@@ -38,6 +38,14 @@ class Tarif extends Model
     ];
 
     /**
+     * Mendapatkan semua pelanggan yang memiliki tarif ini.
+     */
+    public function pelanggans()
+    {
+        return $this->hasMany(Pelanggan::class, 'id_tarif', 'id_tarif');
+    }
+
+    /**
      * Agar route model binding menggunakan 'id_tarif' sebagai key.
      */
     public function getRouteKeyName()

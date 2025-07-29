@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Pelanggan\DashboardController as PelangganDashboardController;
 use App\Http\Controllers\Admin\TarifController;
+use App\Http\Controllers\Admin\PelangganController; // <-- TAMBAHKAN INI
 
 /*
 |--------------------------------------------------------------------------
@@ -34,13 +35,11 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-        // Rute untuk mengelola tarif
-        Route::get('/tarif', [TarifController::class, 'index'])->name('tarif.index');
-        Route::get('/tarif/create', [TarifController::class, 'create'])->name('tarif.create');
-        Route::post('/tarif', [TarifController::class, 'store'])->name('tarif.store');
-        Route::get('/tarif/{tarif}/edit', [TarifController::class, 'edit'])->name('tarif.edit');
-        Route::put('/tarif/{tarif}', [TarifController::class, 'update'])->name('tarif.update');
-        Route::delete('/tarif/{tarif}', [TarifController::class, 'destroy'])->name('tarif.destroy'); // <-- TAMBAHKAN INI
+        // Mengganti semua rute tarif dengan satu baris ini
+        Route::resource('tarif', TarifController::class)->except(['show']);
+
+        // Rute untuk mengelola pelanggan
+        Route::resource('pelanggan', PelangganController::class)->except(['show']); // <-- TAMBAHKAN INI
     });
 
     // --- RUTE KHUSUS PELANGGAN ---
