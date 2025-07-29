@@ -5,14 +5,15 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Pelanggan\DashboardController as PelangganDashboardController;
 use App\Http\Controllers\Admin\TarifController;
-use App\Http\Controllers\Admin\PelangganController; // <-- TAMBAHKAN INI
+use App\Http\Controllers\Admin\PelangganController;
+use App\Http\Controllers\Admin\PenggunaanController; // <-- TAMBAHKAN INI
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 |
-| Di sinilah kita mendaftarkan semua rute untuk aplikasi web kita.
+| mendaftarkan semua rute untuk aplikasi web kita.
 |
 */
 
@@ -39,7 +40,10 @@ Route::middleware('auth')->group(function () {
         Route::resource('tarif', TarifController::class)->except(['show']);
 
         // Rute untuk mengelola pelanggan
-        Route::resource('pelanggan', PelangganController::class)->except(['show']); // <-- TAMBAHKAN INI
+        Route::resource('pelanggan', PelangganController::class)->except(['show']);
+
+        // Rute untuk mengelola penggunaan
+        Route::resource('penggunaan', PenggunaanController::class)->except(['show']); // <-- TAMBAHKAN INI
     });
 
     // --- RUTE KHUSUS PELANGGAN ---
