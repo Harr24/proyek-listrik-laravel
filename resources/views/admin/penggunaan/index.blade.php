@@ -21,7 +21,22 @@
         </div>
     @endif
 
-    <a href="{{ route('admin.penggunaan.create') }}" class="btn btn-primary mb-3">+ Input Penggunaan Baru</a>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <a href="{{ route('admin.penggunaan.create') }}" class="btn btn-primary">+ Input Penggunaan Baru</a>
+        </div>
+        <div class="col-md-6">
+            {{-- FORM PENCARIAN BARU --}}
+            <form action="{{ route('admin.penggunaan.index') }}" method="GET">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Cari pelanggan, bulan, tahun..." name="search"
+                        value="{{ request('search') }}">
+                    <button class="btn btn-outline-secondary" type="submit">Cari</button>
+                </div>
+            </form>
+            {{-- AKHIR FORM PENCARIAN --}}
+        </div>
+    </div>
 
     <div class="table-responsive">
         <table class="table table-striped table-hover">
@@ -59,7 +74,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center">Belum ada data penggunaan.</td>
+                        <td colspan="6" class="text-center">Data tidak ditemukan.</td>
                     </tr>
                 @endforelse
             </tbody>

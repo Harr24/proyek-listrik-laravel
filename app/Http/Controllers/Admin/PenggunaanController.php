@@ -12,10 +12,25 @@ class PenggunaanController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request) // PERUBAHAN DI SINI
     {
-        // Ambil data penggunaan beserta relasi ke pelanggan
-        $semua_penggunaan = Penggunaan::with('pelanggan')->get();
+        // LOGIKA BARU UNTUK PENCARIAN
+        $query = Penggunaan::with('pelanggan');
+
+        if ($request->has('search') && $request->input('search') != '') {
+            $search = $request->input('search');
+            // Mencari di tabel penggunaan (bulan, tahun)
+            $query->where('bulan', 'like', '%' . $search . '%')
+                ->orWhere('tahun', 'like', '%' . $search . '%')
+                // Mencari di tabel pelanggan yang terhubung
+                ->orWhereHas('pelanggan', function ($q) use ($search) {
+                    $q->where('nama_pelanggan', 'like', '%' . $search . '%')
+                        ->orWhere('nomor_meter', 'like', '%' . $search . '%');
+                });
+        }
+
+        $semua_penggunaan = $query->get();
+        // AKHIR DARI LOGIKA BARU
 
         return view('admin.penggunaan.index', compact('semua_penggunaan'));
     }
@@ -39,7 +54,7 @@ class PenggunaanController extends Controller
             'bulan' => 'required|string',
             'tahun' => 'required|numeric',
             'meter_awal' => 'required|numeric|min:0',
-            'meter_akhir' => 'required|numeric|gte:meter_awal', // meter akhir harus lebih besar atau sama dengan meter awal
+            'meter_akhir' => 'required|numeric|gte:meter_awal',
         ]);
 
         Penggunaan::create($request->all());
