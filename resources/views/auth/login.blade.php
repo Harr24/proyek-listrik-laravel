@@ -1,36 +1,45 @@
-<!DOCTYPE html>
-<html lang="id">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-</head>
+@section('title', 'Login')
 
-<body>
-    <h2>Form Login</h2>
+@section('content')
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4 class="mb-0 text-center">Login</h4>
+                </div>
+                <div class="card-body">
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
 
-    @if ($errors->any())
-        <div style="color: red; margin-bottom: 15px;">
-            {{ $errors->first() }}
+                    <form method="POST" action="{{ route('login') }}">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Alamat Email</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <small>Belum punya akun? <a href="{{ route('register') }}">Daftar di sini</a></small>
+                </div>
+            </div>
         </div>
-    @endif
-
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
-
-        <div>
-            <label for="email">Email</label><br>
-            <input type="email" id="email" name="email" value="{{ old('email') }}" required>
-        </div>
-        <br>
-        <div>
-            <label for="password">Password</label><br>
-            <input type="password" id="password" name="password" required>
-        </div>
-        <br>
-        <button type="submit">Login</button>
-    </form>
-    <p>Belum punya akun? <a href="{{ route('register') }}">Daftar di sini</a></p>
-</body>
-
-</html>
+    </div>
+@endsection
