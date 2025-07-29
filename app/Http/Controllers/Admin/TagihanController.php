@@ -12,10 +12,29 @@ class TagihanController extends Controller
     /**
      * Menampilkan daftar semua tagihan.
      */
-    public function index()
+    public function index(Request $request) // PERUBAHAN DI SINI
     {
-        // Ambil data tagihan beserta relasi ke penggunaan dan pelanggan
-        $semua_tagihan = Tagihan::with('penggunaan.pelanggan')->get();
+        // LOGIKA BARU UNTUK PENCARIAN
+        $query = Tagihan::with('penggunaan.pelanggan');
+
+        if ($request->has('search') && $request->input('search') != '') {
+            $search = $request->input('search');
+            // Mencari di tabel tagihan (status)
+            $query->where('status', 'like', '%' . $search . '%')
+                // Mencari di tabel penggunaan yang terhubung
+                ->orWhereHas('penggunaan', function ($q) use ($search) {
+                    $q->where('bulan', 'like', '%' . $search . '%')
+                        ->orWhere('tahun', 'like', '%' . $search . '%')
+                        // Mencari di tabel pelanggan yang terhubung
+                        ->orWhereHas('pelanggan', function ($subq) use ($search) {
+                            $subq->where('nama_pelanggan', 'like', '%' . $search . '%')
+                                ->orWhere('nomor_meter', 'like', '%' . $search . '%');
+                        });
+                });
+        }
+
+        $semua_tagihan = $query->get();
+        // AKHIR DARI LOGIKA BARU
 
         return view('admin.tagihan.index', compact('semua_tagihan'));
     }

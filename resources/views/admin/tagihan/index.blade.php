@@ -15,6 +15,23 @@
         </div>
     @endif
 
+    <div class="row mb-3">
+        <div class="col-md-6">
+            {{-- Kosong untuk saat ini, bisa diisi tombol lain nanti --}}
+        </div>
+        <div class="col-md-6">
+            {{-- FORM PENCARIAN BARU --}}
+            <form action="{{ route('admin.tagihan.index') }}" method="GET">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Cari pelanggan, periode, status..." name="search"
+                        value="{{ request('search') }}">
+                    <button class="btn btn-outline-secondary" type="submit">Cari</button>
+                </div>
+            </form>
+            {{-- AKHIR FORM PENCARIAN --}}
+        </div>
+    </div>
+
     <div class="table-responsive">
         <table class="table table-striped table-hover">
             <thead>
@@ -54,7 +71,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center">Belum ada data tagihan.</td>
+                        <td colspan="7" class="text-center">Data tidak ditemukan.</td>
                     </tr>
                 @endforelse
             </tbody>
