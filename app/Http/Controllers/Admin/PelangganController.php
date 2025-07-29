@@ -5,21 +5,30 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Pelanggan;
 use App\Models\Tarif;
-use App\Models\User; // <-- TAMBAHAN BARU
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash; // <-- TAMBAHAN BARU
+use Illuminate\Support\Facades\Hash;
 
 class PelangganController extends Controller
 {
     /**
      * Menampilkan daftar semua pelanggan.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Ambil data pelanggan beserta data tarif yang terhubung
-        $data_pelanggan = Pelanggan::with('tarif')->get();
+        // Logika Pencarian
+        $query = Pelanggan::with('tarif');
 
-        return view('admin.pelanggan.index', ['semua_pelanggan' => $data_pelanggan]);
+        if ($request->has('search') && $request->input('search') != '') {
+            $search = $request->input('search');
+            $query->where('nama_pelanggan', 'like', '%' . $search . '%')
+                ->orWhere('nomor_meter', 'like', '%' . $search . '%'); // <-- REVISI 1: Spasi dihilangkan
+        }
+
+        // REVISI 2: Ambil data dari $query yang sudah difilter
+        $semua_pelanggan = $query->get();
+
+        return view('admin.pelanggan.index', ['semua_pelanggan' => $semua_pelanggan]);
     }
 
     /**
@@ -27,7 +36,6 @@ class PelangganController extends Controller
      */
     public function create()
     {
-        // Ambil semua data tarif untuk ditampilkan di dropdown
         $semua_tarif = Tarif::all();
         return view('admin.pelanggan.create', ['semua_tarif' => $semua_tarif]);
     }
@@ -37,17 +45,15 @@ class PelangganController extends Controller
      */
     public function store(Request $request)
     {
-        // PERUBAHAN DI SINI: Validasi untuk data user dan pelanggan
         $request->validate([
             'nama_pelanggan' => 'required|string|max:255',
             'nomor_meter' => 'required|string|unique:pelanggans,nomor_meter',
             'alamat' => 'required|string',
             'id_tarif' => 'required|exists:tarifs,id_tarif',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'required|string|email|max:255|unique:users', // REVISI: unique:user menjadi unique:users
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        // PERUBAHAN DI SINI: Buat user baru terlebih dahulu
         $user = User::create([
             'name' => $request->nama_pelanggan,
             'email' => $request->email,
@@ -55,9 +61,8 @@ class PelangganController extends Controller
             'role' => 'pelanggan',
         ]);
 
-        // PERUBAHAN DI SINI: Buat data pelanggan dan hubungkan dengan user_id
         Pelanggan::create([
-            'user_id' => $user->id, // <-- Ini jembatannya
+            'user_id' => $user->id,
             'nama_pelanggan' => $request->nama_pelanggan,
             'nomor_meter' => $request->nomor_meter,
             'alamat' => $request->alamat,
@@ -103,7 +108,6 @@ class PelangganController extends Controller
      */
     public function destroy(Pelanggan $pelanggan)
     {
-        // Hapus user terkait terlebih dahulu jika ada
         if ($pelanggan->user) {
             $pelanggan->user->delete();
         }

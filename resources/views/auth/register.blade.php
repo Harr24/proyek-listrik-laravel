@@ -7,7 +7,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-header">
-                    <h4 class="mb-0 text-center">Registrasi</h4>
+                    <h4 class="mb-0 text-center">Registrasi Akun Pelanggan</h4>
                 </div>
                 <div class="card-body">
                     @if ($errors->any())
