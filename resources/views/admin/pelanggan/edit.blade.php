@@ -29,8 +29,10 @@
                 </div>
                 <div class="mb-3">
                     <label for="nomor_meter" class="form-label">Nomor Meter</label>
-                    <input type="text" class="form-control" id="nomor_meter" name="nomor_meter"
-                        value="{{ old('nomor_meter', $pelanggan->nomor_meter) }}" required>
+                    {{-- PERUBAHAN DI SINI --}}
+                    <input type="text" inputmode="numeric" class="form-control" id="nomor_meter" name="nomor_meter"
+                        value="{{ old('nomor_meter', $pelanggan->nomor_meter) }}" required
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '');">
                 </div>
                 <div class="mb-3">
                     <label for="alamat" class="form-label">Alamat</label>
