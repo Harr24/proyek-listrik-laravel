@@ -38,12 +38,24 @@
         main {
             padding-top: 24px;
         }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+
+            main {
+                width: 100% !important;
+                margin-left: 0 !important;
+                padding: 0 !important;
+            }
+        }
     </style>
 </head>
 
 <body>
 
-    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow no-print">
         <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Admin Panel</a>
         <div class="navbar-nav">
             <div class="nav-item text-nowrap">
@@ -60,7 +72,7 @@
 
     <div class="container-fluid">
         <div class="row">
-            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse no-print">
                 <div class="position-sticky pt-3">
                     <ul class="nav flex-column">
                         <li class="nav-item">
@@ -89,6 +101,11 @@
                             </a>
                         </li>
                         {{-- TAMBAHAN BARU DI SINI --}}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.pembayaran.konfirmasi.index') }}">
+                                Konfirmasi Pembayaran
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('admin.laporan.index') }}">
                                 Laporan

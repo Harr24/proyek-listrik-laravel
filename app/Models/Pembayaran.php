@@ -17,6 +17,7 @@ class Pembayaran extends Model
         'tanggal_bayar',
         'biaya_admin',
         'total_akhir',
+        'bukti_pembayaran', // <-- TAMBAHAN BARU
     ];
 
     /**

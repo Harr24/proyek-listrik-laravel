@@ -8,16 +8,14 @@ use App\Http\Controllers\Admin\TarifController;
 use App\Http\Controllers\Admin\PelangganController;
 use App\Http\Controllers\Admin\PenggunaanController;
 use App\Http\Controllers\Admin\TagihanController;
-use App\Http\Controllers\Admin\PembayaranController;
+use App\Http\Controllers\Admin\PembayaranController as AdminPembayaranController;
 use App\Http\Controllers\Admin\LaporanController;
+use App\Http\Controllers\Pelanggan\PembayaranController as PelangganPembayaranController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Di sinilah kita mendaftarkan semua rute untuk aplikasi web kita.
-|
 */
 
 // Rute untuk Tamu (yang belum login)
@@ -46,10 +44,19 @@ Route::middleware('auth')->group(function () {
         Route::get('/tagihan', [TagihanController::class, 'index'])->name('tagihan.index');
         Route::post('/tagihan/generate/{penggunaan}', [TagihanController::class, 'generate'])->name('tagihan.generate');
 
-        Route::get('/pembayaran/verify/{tagihan}', [PembayaranController::class, 'create'])->name('pembayaran.create');
-        Route::post('/pembayaran/store', [PembayaranController::class, 'store'])->name('pembayaran.store');
-        // TAMBAHAN BARU: Rute untuk melihat detail/struk pembayaran
-        Route::get('/pembayaran/show/{tagihan}', [PembayaranController::class, 'show'])->name('pembayaran.show');
+        // Rute untuk verifikasi dan detail pembayaran oleh admin
+        Route::get('/pembayaran/verify/{tagihan}', [AdminPembayaranController::class, 'create'])->name('pembayaran.create');
+        Route::post('/pembayaran/store', [AdminPembayaranController::class, 'store'])->name('pembayaran.store');
+        Route::get('/pembayaran/show/{tagihan}', [AdminPembayaranController::class, 'show'])->name('pembayaran.show');
+
+        // Rute untuk Konfirmasi Pembayaran
+        Route::get('/konfirmasi-pembayaran', [AdminPembayaranController::class, 'konfirmasiIndex'])->name('pembayaran.konfirmasi.index');
+        // TAMBAHAN BARU: Rute untuk menampilkan detail konfirmasi
+        Route::get('/konfirmasi-pembayaran/{tagihan}', [AdminPembayaranController::class, 'konfirmasiShow'])->name('pembayaran.konfirmasi.show');
+        // TAMBAHAN BARU: Rute untuk menyetujui pembayaran
+        Route::post('/konfirmasi-pembayaran/approve/{tagihan}', [AdminPembayaranController::class, 'konfirmasiApprove'])->name('pembayaran.konfirmasi.approve');
+        // TAMBAHAN BARU: Rute untuk menolak pembayaran
+        Route::post('/konfirmasi-pembayaran/reject/{tagihan}', [AdminPembayaranController::class, 'konfirmasiReject'])->name('pembayaran.konfirmasi.reject');
 
         // Rute untuk Laporan
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
@@ -59,6 +66,10 @@ Route::middleware('auth')->group(function () {
     // --- RUTE KHUSUS PELANGGAN ---
     Route::middleware('role:pelanggan')->prefix('pelanggan')->name('pelanggan.')->group(function () {
         Route::get('/dashboard', [PelangganDashboardController::class, 'index'])->name('dashboard');
+
+        // Rute untuk proses pembayaran oleh pelanggan
+        Route::get('/pembayaran/{tagihan}', [PelangganPembayaranController::class, 'create'])->name('pembayaran.create');
+        Route::post('/pembayaran', [PelangganPembayaranController::class, 'store'])->name('pembayaran.store');
     });
 
 });

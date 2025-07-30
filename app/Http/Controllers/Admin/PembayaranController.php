@@ -7,12 +7,49 @@ use App\Models\Pembayaran;
 use App\Models\Tagihan;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage; // <-- Tambahkan ini
 
 class PembayaranController extends Controller
 {
-    /**
-     * Menampilkan halaman form verifikasi pembayaran.
-     */
+    public function konfirmasiIndex()
+    {
+        $semua_tagihan = Tagihan::where('status', 'Menunggu Konfirmasi')
+            ->with('penggunaan.pelanggan', 'pembayaran')
+            ->get();
+
+        return view('admin.pembayaran.konfirmasi', compact('semua_tagihan'));
+    }
+
+    // TAMBAHAN BARU: Method untuk menampilkan detail konfirmasi
+    public function konfirmasiShow(Tagihan $tagihan)
+    {
+        $tagihan->load('penggunaan.pelanggan', 'pembayaran');
+        return view('admin.pembayaran.konfirmasi_show', compact('tagihan'));
+    }
+
+    // TAMBAHAN BARU: Method untuk menyetujui pembayaran
+    public function konfirmasiApprove(Tagihan $tagihan)
+    {
+        $tagihan->update(['status' => 'Lunas']);
+        return redirect()->route('admin.pembayaran.konfirmasi.index')->with('success', 'Pembayaran berhasil disetujui.');
+    }
+
+    // TAMBAHAN BARU: Method untuk menolak pembayaran
+    public function konfirmasiReject(Tagihan $tagihan)
+    {
+        // Hapus file bukti pembayaran dari storage
+        if ($tagihan->pembayaran && $tagihan->pembayaran->bukti_pembayaran) {
+            Storage::delete('public/bukti_pembayaran/' . $tagihan->pembayaran->bukti_pembayaran);
+        }
+
+        // Hapus data pembayaran
+        $tagihan->pembayaran->delete();
+        // Kembalikan status tagihan
+        $tagihan->update(['status' => 'Belum Lunas']);
+
+        return redirect()->route('admin.pembayaran.konfirmasi.index')->with('success', 'Pembayaran berhasil ditolak.');
+    }
+
     public function create(Tagihan $tagihan)
     {
         $tagihan->load('penggunaan.pelanggan.tarif');
@@ -20,9 +57,6 @@ class PembayaranController extends Controller
         return view('admin.pembayaran.create', compact('tagihan'));
     }
 
-    /**
-     * Menyimpan data pembayaran dan mengubah status tagihan.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -46,17 +80,12 @@ class PembayaranController extends Controller
             ->with('success', 'Pembayaran berhasil diverifikasi.');
     }
 
-    /**
-     * Menampilkan detail/struk pembayaran.
-     */
     public function show(Tagihan $tagihan)
     {
-        // Pastikan tagihan sudah lunas untuk bisa dilihat struknya
         if ($tagihan->status !== 'Lunas' || !$tagihan->pembayaran) {
-            abort(404); // Tampilkan halaman not found jika tagihan belum lunas
+            abort(404);
         }
 
-        // Muat semua relasi yang dibutuhkan
         $tagihan->load('penggunaan.pelanggan.tarif', 'pembayaran');
 
         return view('admin.pembayaran.show', compact('tagihan'));
