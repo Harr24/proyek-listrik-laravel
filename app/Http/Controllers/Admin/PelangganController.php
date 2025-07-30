@@ -24,8 +24,6 @@ class PelangganController extends Controller
                 ->orWhere('nomor_meter', 'like', '%' . $search . '%');
         }
 
-        // PERUBAHAN DARI get() MENJADI paginate()
-        // Angka 10 berarti kita akan menampilkan 10 data per halaman.
         $semua_pelanggan = $query->paginate(10);
 
         return view('admin.pelanggan.index', ['semua_pelanggan' => $semua_pelanggan]);
@@ -45,8 +43,10 @@ class PelangganController extends Controller
      */
     public function store(Request $request)
     {
+        // PERUBAHAN VALIDASI DI SINI
         $request->validate([
-            'nama_pelanggan' => 'required|string|max:255|unique:pelanggans,nama_pelanggan',
+            // Nama pelanggan harus huruf/spasi dan tidak boleh sama
+            'nama_pelanggan' => 'required|string|alpha_spaces|max:255|unique:pelanggans,nama_pelanggan',
             'nomor_meter' => 'required|numeric|digits_between:11,12|unique:pelanggans,nomor_meter',
             'alamat' => 'required|string',
             'id_tarif' => 'required|exists:tarifs,id_tarif',
@@ -90,10 +90,12 @@ class PelangganController extends Controller
      */
     public function update(Request $request, Pelanggan $pelanggan)
     {
+        // PERUBAHAN VALIDASI DI SINI
         $request->validate([
             'id_tarif' => 'required|exists:tarifs,id_tarif',
             'nomor_meter' => 'required|numeric|digits_between:11,12|unique:pelanggans,nomor_meter,' . $pelanggan->id_pelanggan . ',id_pelanggan',
-            'nama_pelanggan' => 'required|string|max:255|unique:pelanggans,nama_pelanggan,' . $pelanggan->id_pelanggan . ',id_pelanggan',
+            // Nama pelanggan harus huruf/spasi dan unik, kecuali untuk data yang sedang diedit
+            'nama_pelanggan' => 'required|string|alpha_spaces|max:255|unique:pelanggans,nama_pelanggan,' . $pelanggan->id_pelanggan . ',id_pelanggan',
             'alamat' => 'required|string',
         ]);
 

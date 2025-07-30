@@ -24,12 +24,13 @@
                 @method('PUT')
                 <div class="mb-3">
                     <label for="nama_pelanggan" class="form-label">Nama Pelanggan</label>
+                    {{-- PERUBAHAN DI SINI --}}
                     <input type="text" class="form-control" id="nama_pelanggan" name="nama_pelanggan"
-                        value="{{ old('nama_pelanggan', $pelanggan->nama_pelanggan) }}" required>
+                        value="{{ old('nama_pelanggan', $pelanggan->nama_pelanggan) }}" required
+                        oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '');">
                 </div>
                 <div class="mb-3">
                     <label for="nomor_meter" class="form-label">Nomor Meter</label>
-                    {{-- PERUBAHAN DI SINI --}}
                     <input type="text" inputmode="numeric" class="form-control" id="nomor_meter" name="nomor_meter"
                         value="{{ old('nomor_meter', $pelanggan->nomor_meter) }}" required
                         oninput="this.value = this.value.replace(/[^0-9]/g, '');">
