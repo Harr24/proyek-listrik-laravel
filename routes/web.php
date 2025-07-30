@@ -8,7 +8,8 @@ use App\Http\Controllers\Admin\TarifController;
 use App\Http\Controllers\Admin\PelangganController;
 use App\Http\Controllers\Admin\PenggunaanController;
 use App\Http\Controllers\Admin\TagihanController;
-use App\Http\Controllers\Admin\PembayaranController; // baru
+use App\Http\Controllers\Admin\PembayaranController;
+use App\Http\Controllers\Admin\LaporanController; // <-- buat lsporan
 
 
 /*
@@ -55,6 +56,10 @@ Route::middleware('auth')->group(function () {
         // Rute Verifikasi Pembayaran
         Route::get('/pembayaran/verify/{tagihan}', [PembayaranController::class, 'create'])->name('pembayaran.create');
         Route::post('/pembayaran/store', [PembayaranController::class, 'store'])->name('pembayaran.store');
+
+        // Rute admin laporan
+        Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+        Route::get('/laporan/export', [LaporanController::class, 'exportExcel'])->name('laporan.export');
     });
 
     // --- RUTE KHUSUS PELANGGAN ---

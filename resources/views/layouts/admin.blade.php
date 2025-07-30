@@ -88,6 +88,12 @@
                                 Kelola Tagihan
                             </a>
                         </li>
+                        {{-- TAMBAHAN BARU DI SINI --}}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.laporan.index') }}">
+                                Laporan
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </nav>
