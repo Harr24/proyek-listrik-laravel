@@ -1,88 +1,98 @@
-<!DOCTYPE html>
-<html lang="id">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard Pelanggan</title>
-    <style>
-        body {
-            font-family: sans-serif;
-        }
+@section('title', 'Dashboard Pelanggan')
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
+@section('content')
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Dashboard Pelanggan</h4>
+                </div>
+                <div class="card-body">
+                    <p>Selamat datang, <strong>{{ Auth::user()->name }}</strong>!</p>
+                    <p>Di bawah ini adalah riwayat tagihan dan grafik penggunaan listrik Anda.</p>
+                </div>
+            </div>
 
-        th,
-        td {
-            border: 1px solid #dddddd;
-            padding: 8px;
-            text-align: left;
-        }
+            {{-- TAMBAHAN BARU: Kartu untuk Grafik --}}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Grafik Penggunaan Listrik (12 Bulan Terakhir)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="usageChart"></canvas>
+                </div>
+            </div>
 
-        th {
-            background-color: #f2f2f2;
-        }
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Riwayat Tagihan Anda</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Periode</th>
+                                    <th>Jumlah Meter</th>
+                                    <th>Total Bayar</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($semua_tagihan as $tagihan)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $tagihan->penggunaan->bulan }} {{ $tagihan->penggunaan->tahun }}</td>
+                                        <td>{{ $tagihan->jumlah_meter }} KWH</td>
+                                        <td>Rp {{ number_format($tagihan->total_bayar, 0, ',', '.') }}</td>
+                                        <td>
+                                            @if($tagihan->status == 'Lunas')
+                                                <span class="badge bg-success">Lunas</span>
+                                            @else
+                                                <span class="badge bg-danger">Belum Lunas</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center">Anda belum memiliki riwayat tagihan.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        .status-lunas {
-            color: green;
-            font-weight: bold;
-        }
+    {{-- TAMBAHAN BARU: Skrip untuk Chart.js --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('usageChart');
 
-        .status-belum {
-            color: red;
-            font-weight: bold;
-        }
-    </style>
-</head>
-
-<body>
-    <h1>Dashboard Pelanggan</h1>
-    <p>Selamat datang, {{ Auth::user()->name }}!</p>
-    <hr>
-
-    <h3>Riwayat Tagihan Anda</h3>
-
-    <!-- Tabel untuk menampilkan riwayat tagihan -->
-    <table>
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Periode</th>
-                <th>Jumlah Meter</th>
-                <th>Total Bayar</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($semua_tagihan as $tagihan)
-                <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $tagihan->penggunaan->bulan }} {{ $tagihan->penggunaan->tahun }}</td>
-                    <td>{{ $tagihan->jumlah_meter }} KWH</td>
-                    <td>Rp {{ number_format($tagihan->total_bayar, 0, ',', '.') }}</td>
-                    <td>
-                        @if($tagihan->status == 'Lunas')
-                            <span class="status-lunas">Lunas</span>
-                        @else
-                            <span class="status-belum">Belum Lunas</span>
-                        @endif
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="5" style="text-align: center;">Anda belum memiliki riwayat tagihan.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
-    <br>
-    <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit">Logout</button>
-    </form>
-</body>
-
-</html>
+        new Chart(ctx, {
+            type: 'bar', // Jenis grafik: bar, line, pie, dll.
+            data: {
+                labels: @json($chartLabels), // Label sumbu X dari controller
+                datasets: [{
+                    label: 'Pemakaian Listrik (KWH)',
+                    data: @json($chartData), // Data sumbu Y dari controller
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+@endsection

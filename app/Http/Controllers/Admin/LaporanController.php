@@ -16,8 +16,10 @@ class LaporanController extends Controller
         $bulan = $request->input('bulan');
         $tahun = $request->input('tahun');
 
+        // Mulai query ke tabel tagihan
         $query = Tagihan::query()->with('penggunaan.pelanggan');
 
+        // Terapkan filter jika bulan dan tahun diisi
         if ($bulan && $tahun) {
             $query->whereHas('penggunaan', function ($q) use ($bulan, $tahun) {
                 $q->where('bulan', $bulan)->where('tahun', $tahun);
@@ -25,9 +27,14 @@ class LaporanController extends Controller
         }
 
         $semua_tagihan = $query->get();
+
+        // Hitung total pendapatan hanya dari tagihan yang lunas
         $total_pendapatan = $semua_tagihan->where('status', 'Lunas')->sum('total_bayar');
 
-        return view('admin.laporan.index', compact('semua_tagihan', 'total_pendapatan', 'bulan', 'tahun'));
+        // TAMBAHAN BARU: Hitung jumlah pelanggan unik dari data tagihan yang ada
+        $jumlah_pelanggan = $semua_tagihan->pluck('penggunaan.pelanggan.id_pelanggan')->unique()->count();
+
+        return view('admin.laporan.index', compact('semua_tagihan', 'total_pendapatan', 'bulan', 'tahun', 'jumlah_pelanggan'));
     }
 
     /**

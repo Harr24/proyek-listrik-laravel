@@ -12,17 +12,15 @@ class PenggunaanController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request) // PERUBAHAN DI SINI
+    public function index(Request $request)
     {
-        // LOGIKA BARU UNTUK PENCARIAN
-        $query = Penggunaan::with('pelanggan');
+        // PERUBAHAN DI SINI: tambahkan 'tagihan' ke dalam with()
+        $query = Penggunaan::with(['pelanggan', 'tagihan']);
 
         if ($request->has('search') && $request->input('search') != '') {
             $search = $request->input('search');
-            // Mencari di tabel penggunaan (bulan, tahun)
             $query->where('bulan', 'like', '%' . $search . '%')
                 ->orWhere('tahun', 'like', '%' . $search . '%')
-                // Mencari di tabel pelanggan yang terhubung
                 ->orWhereHas('pelanggan', function ($q) use ($search) {
                     $q->where('nama_pelanggan', 'like', '%' . $search . '%')
                         ->orWhere('nomor_meter', 'like', '%' . $search . '%');
@@ -30,7 +28,6 @@ class PenggunaanController extends Controller
         }
 
         $semua_penggunaan = $query->get();
-        // AKHIR DARI LOGIKA BARU
 
         return view('admin.penggunaan.index', compact('semua_penggunaan'));
     }

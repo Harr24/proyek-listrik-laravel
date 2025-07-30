@@ -49,14 +49,22 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             Hasil Laporan
             <div class="no-print">
-                {{-- Tombol Cetak Laporan sudah dihapus --}}
                 <a href="{{ route('admin.laporan.export', ['bulan' => $bulan, 'tahun' => $tahun]) }}"
                     class="btn btn-success btn-sm">Export ke Excel</a>
             </div>
         </div>
         <div class="card-body">
-            <p><strong>Total Pendapatan (Lunas):</strong> <span class="fs-5 fw-bold">Rp
-                    {{ number_format($total_pendapatan, 0, ',', '.') }}</span></p>
+            {{-- PERUBAHAN DI SINI --}}
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <p><strong>Total Pendapatan (Lunas):</strong> <span class="fs-5 fw-bold">Rp
+                            {{ number_format($total_pendapatan, 0, ',', '.') }}</span></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Jumlah Pelanggan (dengan tagihan):</strong> <span
+                            class="fs-5 fw-bold">{{ $jumlah_pelanggan }}</span></p>
+                </div>
+            </div>
             <div class="table-responsive">
                 <table class="table table-striped table-hover">
                     <thead>

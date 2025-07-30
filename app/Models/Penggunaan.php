@@ -27,4 +27,10 @@ class Penggunaan extends Model
     {
         return $this->belongsTo(Pelanggan::class, 'id_pelanggan', 'id_pelanggan');
     }
+
+    // TAMBAHAN BARU: Relasi one-to-one ke model Tagihan
+    public function tagihan()
+    {
+        return $this->hasOne(Tagihan::class, 'id_penggunaan', 'id_penggunaan');
+    }
 }

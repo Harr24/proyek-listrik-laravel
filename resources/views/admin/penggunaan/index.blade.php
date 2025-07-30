@@ -7,7 +7,6 @@
         <h1 class="h2">Kelola Data Penggunaan</h1>
     </div>
 
-    {{-- Menampilkan pesan sukses atau error --}}
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
@@ -26,7 +25,6 @@
             <a href="{{ route('admin.penggunaan.create') }}" class="btn btn-primary">+ Input Penggunaan Baru</a>
         </div>
         <div class="col-md-6">
-            {{-- FORM PENCARIAN BARU --}}
             <form action="{{ route('admin.penggunaan.index') }}" method="GET">
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="Cari pelanggan, bulan, tahun..." name="search"
@@ -34,7 +32,6 @@
                     <button class="btn btn-outline-secondary" type="submit">Cari</button>
                 </div>
             </form>
-            {{-- AKHIR FORM PENCARIAN --}}
         </div>
     </div>
 
@@ -59,10 +56,22 @@
                         <td>{{ $penggunaan->meter_awal }}</td>
                         <td>{{ $penggunaan->meter_akhir }}</td>
                         <td>
-                            <form action="{{ route('admin.tagihan.generate', $penggunaan) }}" method="POST" class="d-inline">
-                                @csrf
-                                <button type="submit" class="btn btn-success btn-sm">Generate Tagihan</button>
-                            </form>
+                            {{-- LOGIKA BARU UNTUK KOLOM AKSI --}}
+                            @if ($penggunaan->tagihan)
+                                @if ($penggunaan->tagihan->status == 'Lunas')
+                                    <span class="badge bg-success">Sudah Lunas</span>
+                                @else
+                                    <span class="badge bg-danger me-1">Belum Lunas</span>
+                                    <a href="{{ route('admin.pembayaran.create', $penggunaan->tagihan) }}"
+                                        class="btn btn-info btn-sm">Lunaskan</a>
+                                @endif
+                            @else
+                                <form action="{{ route('admin.tagihan.generate', $penggunaan) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-success btn-sm">Generate Tagihan</button>
+                                </form>
+                            @endif
+
                             <a href="{{ route('admin.penggunaan.edit', $penggunaan) }}" class="btn btn-warning btn-sm">Edit</a>
                             <form action="{{ route('admin.penggunaan.destroy', $penggunaan) }}" method="POST" class="d-inline">
                                 @csrf
