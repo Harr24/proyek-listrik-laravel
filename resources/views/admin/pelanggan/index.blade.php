@@ -7,7 +7,6 @@
         <h1 class="h2">Kelola Data Pelanggan</h1>
     </div>
 
-    {{-- Menampilkan pesan sukses --}}
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
@@ -20,7 +19,6 @@
             <a href="{{ route('admin.pelanggan.create') }}" class="btn btn-primary">+ Tambah Pelanggan Baru</a>
         </div>
         <div class="col-md-6">
-            {{-- FORM PENCARIAN BARU --}}
             <form action="{{ route('admin.pelanggan.index') }}" method="GET">
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="Cari nama atau nomor meter..." name="search"
@@ -28,7 +26,6 @@
                     <button class="btn btn-outline-secondary" type="submit">Cari</button>
                 </div>
             </form>
-            {{-- AKHIR FORM PENCARIAN --}}
         </div>
     </div>
 
@@ -47,7 +44,8 @@
             <tbody>
                 @forelse ($semua_pelanggan as $pelanggan)
                     <tr>
-                        <td>{{ $loop->iteration }}</td>
+                        {{-- PERBAIKAN: Menggunakan nomor urut dari pagination --}}
+                        <td>{{ $semua_pelanggan->firstItem() + $loop->index }}</td>
                         <td>{{ $pelanggan->nomor_meter }}</td>
                         <td>{{ $pelanggan->nama_pelanggan }}</td>
                         <td>{{ $pelanggan->alamat }}</td>
@@ -70,4 +68,10 @@
             </tbody>
         </table>
     </div>
+
+    {{-- PERBAIKAN: Menampilkan tombol paginasi di dalam div --}}
+    <div class="d-flex justify-content-center">
+        {{ $semua_pelanggan->appends(request()->query())->links() }}
+    </div>
+
 @endsection

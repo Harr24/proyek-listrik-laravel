@@ -24,7 +24,9 @@ class PelangganController extends Controller
                 ->orWhere('nomor_meter', 'like', '%' . $search . '%');
         }
 
-        $semua_pelanggan = $query->get();
+        // PERUBAHAN DARI get() MENJADI paginate()
+        // Angka 10 berarti kita akan menampilkan 10 data per halaman.
+        $semua_pelanggan = $query->paginate(10);
 
         return view('admin.pelanggan.index', ['semua_pelanggan' => $semua_pelanggan]);
     }
@@ -43,15 +45,11 @@ class PelangganController extends Controller
      */
     public function store(Request $request)
     {
-        // PERUBAHAN VALIDASI DI SINI
         $request->validate([
-            // Nama pelanggan tidak boleh sama dengan yang sudah ada
             'nama_pelanggan' => 'required|string|max:255|unique:pelanggans,nama_pelanggan',
-            // Nomor meter harus angka, antara 11-12 digit, dan tidak boleh sama
             'nomor_meter' => 'required|numeric|digits_between:11,12|unique:pelanggans,nomor_meter',
             'alamat' => 'required|string',
             'id_tarif' => 'required|exists:tarifs,id_tarif',
-            // Email tidak boleh sama dengan yang sudah ada
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
@@ -92,12 +90,9 @@ class PelangganController extends Controller
      */
     public function update(Request $request, Pelanggan $pelanggan)
     {
-        // PERUBAHAN VALIDASI DI SINI
         $request->validate([
             'id_tarif' => 'required|exists:tarifs,id_tarif',
-            // Nomor meter harus unik, kecuali untuk data yang sedang diedit
             'nomor_meter' => 'required|numeric|digits_between:11,12|unique:pelanggans,nomor_meter,' . $pelanggan->id_pelanggan . ',id_pelanggan',
-            // Nama pelanggan harus unik, kecuali untuk data yang sedang diedit
             'nama_pelanggan' => 'required|string|max:255|unique:pelanggans,nama_pelanggan,' . $pelanggan->id_pelanggan . ',id_pelanggan',
             'alamat' => 'required|string',
         ]);
