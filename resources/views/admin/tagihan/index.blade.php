@@ -7,7 +7,6 @@
         <h1 class="h2">Kelola Data Tagihan</h1>
     </div>
 
-    {{-- Menampilkan pesan sukses --}}
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
@@ -17,10 +16,8 @@
 
     <div class="row mb-3">
         <div class="col-md-6">
-            {{-- Kosong untuk saat ini, bisa diisi tombol lain nanti --}}
         </div>
         <div class="col-md-6">
-            {{-- FORM PENCARIAN BARU --}}
             <form action="{{ route('admin.tagihan.index') }}" method="GET">
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="Cari pelanggan, periode, status..." name="search"
@@ -28,7 +25,6 @@
                     <button class="btn btn-outline-secondary" type="submit">Cari</button>
                 </div>
             </form>
-            {{-- AKHIR FORM PENCARIAN --}}
         </div>
     </div>
 
@@ -61,11 +57,13 @@
                             @endif
                         </td>
                         <td>
-                            @if($tagihan->status == 'Belum Lunas')
+                            @if($tagihan->status == 'Lunas')
+                                {{-- PERUBAHAN DI SINI --}}
+                                <a href="{{ route('admin.pembayaran.show', $tagihan) }}" class="btn btn-secondary btn-sm">Lihat
+                                    Detail</a>
+                            @else
                                 <a href="{{ route('admin.pembayaran.create', $tagihan) }}"
                                     class="btn btn-info btn-sm">Verifikasi</a>
-                            @else
-                                -
                             @endif
                         </td>
                     </tr>

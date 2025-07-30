@@ -26,4 +26,10 @@ class Tagihan extends Model
     {
         return $this->belongsTo(Penggunaan::class, 'id_penggunaan', 'id_penggunaan');
     }
+
+    // TAMBAHAN BARU: Relasi one-to-one ke model Pembayaran
+    public function pembayaran()
+    {
+        return $this->hasOne(Pembayaran::class, 'id_tagihan', 'id_tagihan');
+    }
 }

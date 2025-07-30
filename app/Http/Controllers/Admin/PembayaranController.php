@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Pembayaran;
 use App\Models\Tagihan;
 use Illuminate\Http\Request;
-use Carbon\Carbon; // <-- Penting untuk mengelola tanggal
+use Carbon\Carbon;
 
 class PembayaranController extends Controller
 {
@@ -15,7 +15,6 @@ class PembayaranController extends Controller
      */
     public function create(Tagihan $tagihan)
     {
-        // Muat relasi untuk memastikan data tersedia di view
         $tagihan->load('penggunaan.pelanggan.tarif');
 
         return view('admin.pembayaran.create', compact('tagihan'));
@@ -32,10 +31,8 @@ class PembayaranController extends Controller
             'biaya_admin' => 'required|numeric|min:0',
         ]);
 
-        // 1. Cari tagihan berdasarkan ID
         $tagihan = Tagihan::findOrFail($request->id_tagihan);
 
-        // 2. Buat data pembayaran baru
         Pembayaran::create([
             'id_tagihan' => $tagihan->id_tagihan,
             'tanggal_bayar' => $request->tanggal_bayar,
@@ -43,10 +40,25 @@ class PembayaranController extends Controller
             'total_akhir' => $tagihan->total_bayar + $request->biaya_admin,
         ]);
 
-        // 3. Update status tagihan menjadi 'Lunas'
         $tagihan->update(['status' => 'Lunas']);
 
         return redirect()->route('admin.tagihan.index')
             ->with('success', 'Pembayaran berhasil diverifikasi.');
+    }
+
+    /**
+     * Menampilkan detail/struk pembayaran.
+     */
+    public function show(Tagihan $tagihan)
+    {
+        // Pastikan tagihan sudah lunas untuk bisa dilihat struknya
+        if ($tagihan->status !== 'Lunas' || !$tagihan->pembayaran) {
+            abort(404); // Tampilkan halaman not found jika tagihan belum lunas
+        }
+
+        // Muat semua relasi yang dibutuhkan
+        $tagihan->load('penggunaan.pelanggan.tarif', 'pembayaran');
+
+        return view('admin.pembayaran.show', compact('tagihan'));
     }
 }

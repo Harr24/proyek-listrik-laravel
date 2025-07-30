@@ -9,15 +9,14 @@ use App\Http\Controllers\Admin\PelangganController;
 use App\Http\Controllers\Admin\PenggunaanController;
 use App\Http\Controllers\Admin\TagihanController;
 use App\Http\Controllers\Admin\PembayaranController;
-use App\Http\Controllers\Admin\LaporanController; // <-- buat lsporan
-
+use App\Http\Controllers\Admin\LaporanController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 |
-| Mendaftarkan semua rute untuk aplikasi web kita.
+| Di sinilah kita mendaftarkan semua rute untuk aplikasi web kita.
 |
 */
 
@@ -40,24 +39,19 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-        // Mengganti semua rute tarif dengan satu baris ini
         Route::resource('tarif', TarifController::class)->except(['show']);
-
-        // Rute untuk mengelola pelanggan
         Route::resource('pelanggan', PelangganController::class)->except(['show']);
-
-        // Rute untuk mengelola penggunaan
         Route::resource('penggunaan', PenggunaanController::class)->except(['show']);
 
-        // Rute untuk mengelola tagihan
         Route::get('/tagihan', [TagihanController::class, 'index'])->name('tagihan.index');
         Route::post('/tagihan/generate/{penggunaan}', [TagihanController::class, 'generate'])->name('tagihan.generate');
 
-        // Rute Verifikasi Pembayaran
         Route::get('/pembayaran/verify/{tagihan}', [PembayaranController::class, 'create'])->name('pembayaran.create');
         Route::post('/pembayaran/store', [PembayaranController::class, 'store'])->name('pembayaran.store');
+        // TAMBAHAN BARU: Rute untuk melihat detail/struk pembayaran
+        Route::get('/pembayaran/show/{tagihan}', [PembayaranController::class, 'show'])->name('pembayaran.show');
 
-        // Rute admin laporan
+        // Rute untuk Laporan
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
         Route::get('/laporan/export', [LaporanController::class, 'exportExcel'])->name('laporan.export');
     });
@@ -65,7 +59,6 @@ Route::middleware('auth')->group(function () {
     // --- RUTE KHUSUS PELANGGAN ---
     Route::middleware('role:pelanggan')->prefix('pelanggan')->name('pelanggan.')->group(function () {
         Route::get('/dashboard', [PelangganDashboardController::class, 'index'])->name('dashboard');
-        // Tambahkan rute pelanggan lainnya di sini...
     });
 
 });
