@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Tarif;
+use App\Models\Pelanggan;
+use App\Models\Berita;
 
 class HomeController extends Controller
 {
@@ -12,8 +14,11 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // hanya menampilkan view, tanpa data
-        return view('home');
+        $jumlah_pelanggan = Pelanggan::count();
+        // Mengambil 10 berita terbaru untuk ditampilkan di carousel
+        $berita_terbaru = Berita::latest()->take(10)->get();
+
+        return view('home', compact('jumlah_pelanggan', 'berita_terbaru'));
     }
 
     /**
@@ -21,10 +26,7 @@ class HomeController extends Controller
      */
     public function daftarHarga()
     {
-        // Ambil semua data dari tabel tarifs
         $semua_tarif = Tarif::all();
-
-        // Kirim data tersebut ke view 'daftar-harga'
         return view('daftar-harga', compact('semua_tarif'));
     }
 }

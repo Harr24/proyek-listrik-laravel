@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Admin\BeritaController; // berita
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Pelanggan\DashboardController as PelangganDashboardController;
 use App\Http\Controllers\Admin\TarifController;
@@ -69,6 +70,8 @@ Route::middleware('auth')->group(function () {
         // Rute untuk Laporan
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
         Route::get('/laporan/export', [LaporanController::class, 'exportExcel'])->name('laporan.export');
+        //berita admin
+        Route::resource('berita', BeritaController::class)->except(['show']); // <-- TAMBAHKAN INI
     });
 
     // --- RUTE KHUSUS PELANGGAN ---

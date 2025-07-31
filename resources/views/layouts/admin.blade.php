@@ -100,10 +100,14 @@
                                 Kelola Tagihan
                             </a>
                         </li>
-                        {{-- TAMBAHAN BARU DI SINI --}}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('admin.pembayaran.konfirmasi.index') }}">
                                 Konfirmasi Pembayaran
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.berita.index') }}">
+                                Kelola Berita
                             </a>
                         </li>
                         <li class="nav-item">
