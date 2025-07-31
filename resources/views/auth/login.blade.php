@@ -7,7 +7,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-header">
-                    <h4 class="mb-0 text-center">Login</h4>
+                    <h4 class="mb-0 text-center">Login Pelanggan</h4>
                 </div>
                 <div class="card-body">
                     @if ($errors->any())
@@ -31,13 +31,15 @@
                             <label for="password" class="form-label">Password</label>
                             <input type="password" class="form-control" id="password" name="password" required>
                         </div>
-                        <div class="d-grid">
+                        <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">Login</button>
+                            {{-- TOMBOL BARU DI SINI --}}
+                            <a href="{{ route('home') }}" class="btn btn-outline-secondary">Kembali ke Homepage</a>
                         </div>
                     </form>
                 </div>
                 <div class="card-footer text-center">
-                    <small>Belum punya akun? <a href="{{ route('register') }}">Daftar di sini</a></small>
+                    <small>Belum punya akun? Silakan hubungi admin untuk pendaftaran.</small>
                 </div>
             </div>
         </div>

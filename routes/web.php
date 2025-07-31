@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Pelanggan\DashboardController as PelangganDashboardController;
 use App\Http\Controllers\Admin\TarifController;
@@ -18,10 +19,14 @@ use App\Http\Controllers\Pelanggan\PembayaranController as PelangganPembayaranCo
 |--------------------------------------------------------------------------
 */
 
+// Rute Homepage
+Route::get('/', [HomeController::class, 'index'])->name('home');
+// Daftar Harga home
+Route::get('/daftar-harga', [HomeController::class, 'daftarHarga'])->name('daftar-harga');
 // Rute untuk Tamu (yang belum login)
 Route::middleware('guest')->group(function () {
-    Route::get('register', [AuthController::class, 'registerCreate'])->name('register');
-    Route::post('register', [AuthController::class, 'registerStore']);
+    //Route::get('register', [AuthController::class, 'registerCreate'])->name('register');
+    //Route::post('register', [AuthController::class, 'registerStore']);
     Route::get('login', [AuthController::class, 'loginCreate'])->name('login');
     Route::post('login', [AuthController::class, 'loginAuthenticate']);
 });
