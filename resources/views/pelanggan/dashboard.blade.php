@@ -20,15 +20,7 @@
                 </div>
             </div>
 
-            <div class="card mt-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Grafik Penggunaan Listrik (12 Bulan Terakhir)</h5>
-                </div>
-                <div class="card-body">
-                    <canvas id="usageChart"></canvas>
-                </div>
-            </div>
-
+            {{-- PERUBAHAN POSISI: Tabel Riwayat Tagihan sekarang di atas --}}
             <div class="card mt-4">
                 <div class="card-header">
                     <h5 class="mb-0">Riwayat Tagihan Anda</h5>
@@ -79,6 +71,16 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+
+            {{-- PERUBAHAN POSISI: Grafik sekarang di bawah --}}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Grafik Penggunaan Listrik (12 Bulan Terakhir)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="usageChart"></canvas>
                 </div>
             </div>
         </div>
