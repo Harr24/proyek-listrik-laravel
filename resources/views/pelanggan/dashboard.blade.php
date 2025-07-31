@@ -20,7 +20,7 @@
                 </div>
             </div>
 
-            {{-- PERUBAHAN POSISI: Tabel Riwayat Tagihan sekarang di atas --}}
+            {{-- Tabel Riwayat Tagihan di atas --}}
             <div class="card mt-4">
                 <div class="card-header">
                     <h5 class="mb-0">Riwayat Tagihan Anda</h5>
@@ -55,7 +55,10 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if($tagihan->status == 'Belum Lunas')
+                                            @if($tagihan->status == 'Lunas')
+                                                <a href="{{ route('pelanggan.pembayaran.show', $tagihan) }}"
+                                                    class="btn btn-secondary btn-sm">Lihat Struk</a>
+                                            @elseif($tagihan->status == 'Belum Lunas')
                                                 <a href="{{ route('pelanggan.pembayaran.create', $tagihan) }}"
                                                     class="btn btn-primary btn-sm">Bayar Sekarang</a>
                                             @else
@@ -74,7 +77,7 @@
                 </div>
             </div>
 
-            {{-- PERUBAHAN POSISI: Grafik sekarang di bawah --}}
+            {{-- Grafik di bawah --}}
             <div class="card mt-4">
                 <div class="card-header">
                     <h5 class="mb-0">Grafik Penggunaan Listrik (12 Bulan Terakhir)</h5>

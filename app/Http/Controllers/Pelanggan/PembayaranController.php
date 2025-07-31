@@ -31,7 +31,7 @@ class PembayaranController extends Controller
     {
         $request->validate([
             'id_tagihan' => 'required|exists:tagihans,id_tagihan',
-            'bukti_pembayaran' => 'required|image|mimes:jpeg,png,jpg|max:2048', // Validasi file gambar
+            'bukti_pembayaran' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $tagihan = Tagihan::findOrFail($request->id_tagihan);
@@ -50,7 +50,7 @@ class PembayaranController extends Controller
         Pembayaran::create([
             'id_tagihan' => $tagihan->id_tagihan,
             'tanggal_bayar' => now(),
-            'biaya_admin' => 2500, // Default
+            'biaya_admin' => 2500,
             'total_akhir' => $tagihan->total_bayar + 2500,
             'bukti_pembayaran' => $fileName,
         ]);
@@ -59,5 +59,20 @@ class PembayaranController extends Controller
         $tagihan->update(['status' => 'Menunggu Konfirmasi']);
 
         return redirect()->route('pelanggan.dashboard')->with('success', 'Bukti pembayaran berhasil diunggah. Mohon tunggu konfirmasi dari admin.');
+    }
+
+    // TAMBAHAN BARU: Method untuk menampilkan struk kepada pelanggan
+    public function show(Tagihan $tagihan)
+    {
+        // Keamanan: Pastikan tagihan ini milik user yang sedang login dan sudah lunas
+        $idPelangganLogin = Auth::user()->pelanggan->id_pelanggan;
+        if ($tagihan->penggunaan->id_pelanggan != $idPelangganLogin || $tagihan->status !== 'Lunas' || !$tagihan->pembayaran) {
+            abort(404);
+        }
+
+        // Muat semua relasi yang dibutuhkan
+        $tagihan->load('penggunaan.pelanggan.tarif', 'pembayaran');
+
+        return view('pelanggan.pembayaran.show', compact('tagihan'));
     }
 }

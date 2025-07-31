@@ -73,6 +73,8 @@ Route::middleware('auth')->group(function () {
         // Rute untuk proses pembayaran oleh pelanggan
         Route::get('/pembayaran/{tagihan}', [PelangganPembayaranController::class, 'create'])->name('pembayaran.create');
         Route::post('/pembayaran', [PelangganPembayaranController::class, 'store'])->name('pembayaran.store');
+        //struk
+        Route::get('/struk/{tagihan}', [PelangganPembayaranController::class, 'show'])->name('pembayaran.show');
     });
 
 });
