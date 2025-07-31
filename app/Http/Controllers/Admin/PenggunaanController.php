@@ -6,15 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Penggunaan;
 use App\Models\Pelanggan;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class PenggunaanController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
-        // PERUBAHAN DI SINI: tambahkan 'tagihan' ke dalam with()
         $query = Penggunaan::with(['pelanggan', 'tagihan']);
 
         if ($request->has('search') && $request->input('search') != '') {
@@ -27,23 +24,52 @@ class PenggunaanController extends Controller
                 });
         }
 
-        $semua_penggunaan = $query->get();
+        $semua_penggunaan = $query->paginate(10);
 
+        // Logika untuk daftar tugas sudah dipindahkan
         return view('admin.penggunaan.index', compact('semua_penggunaan'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    // Method baru khusus untuk halaman "Belum Diinput"
+    public function belumInputIndex(Request $request)
     {
-        $semua_pelanggan = Pelanggan::all();
-        return view('admin.penggunaan.create', compact('semua_pelanggan'));
+        $daftarBulan = [
+            'January' => 'Januari',
+            'February' => 'Februari',
+            'March' => 'Maret',
+            'April' => 'April',
+            'May' => 'Mei',
+            'June' => 'Juni',
+            'July' => 'Juli',
+            'August' => 'Agustus',
+            'September' => 'September',
+            'October' => 'Oktober',
+            'November' => 'November',
+            'December' => 'Desember'
+        ];
+
+        // Ambil filter dari request, jika tidak ada, gunakan bulan & tahun saat ini
+        $bulanInggris = Carbon::now()->format('F');
+        $bulanIni = $request->input('bulan', $daftarBulan[$bulanInggris]);
+        $tahunIni = $request->input('tahun', Carbon::now()->year);
+
+        $sudahDiinputIds = Penggunaan::where('bulan', $bulanIni)
+            ->where('tahun', $tahunIni)
+            ->pluck('id_pelanggan');
+
+        $pelanggan_belum_input = Pelanggan::whereNotIn('id_pelanggan', $sudahDiinputIds)->get();
+
+        return view('admin.penggunaan.belum_input', compact('pelanggan_belum_input', 'bulanIni', 'tahunIni'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    public function create(Request $request)
+    {
+        $semua_pelanggan = Pelanggan::all();
+        $pelanggan_id_terpilih = $request->query('pelanggan_id');
+
+        return view('admin.penggunaan.create', compact('semua_pelanggan', 'pelanggan_id_terpilih'));
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -60,18 +86,12 @@ class PenggunaanController extends Controller
             ->with('success', 'Data penggunaan berhasil ditambahkan.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Penggunaan $penggunaan)
     {
         $semua_pelanggan = Pelanggan::all();
         return view('admin.penggunaan.edit', compact('penggunaan', 'semua_pelanggan'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Penggunaan $penggunaan)
     {
         $request->validate([
@@ -88,9 +108,6 @@ class PenggunaanController extends Controller
             ->with('success', 'Data penggunaan berhasil diubah.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Penggunaan $penggunaan)
     {
         $penggunaan->delete();

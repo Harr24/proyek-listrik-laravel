@@ -39,6 +39,9 @@ Route::middleware('auth')->group(function () {
 
         Route::resource('tarif', TarifController::class)->except(['show']);
         Route::resource('pelanggan', PelangganController::class)->except(['show']);
+        //penggunaan
+
+        Route::get('/penggunaan/belum-input', [PenggunaanController::class, 'belumInputIndex'])->name('penggunaan.belum_input');
         Route::resource('penggunaan', PenggunaanController::class)->except(['show']);
 
         Route::get('/tagihan', [TagihanController::class, 'index'])->name('tagihan.index');

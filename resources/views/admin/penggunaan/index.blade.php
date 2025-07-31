@@ -21,10 +21,12 @@
     @endif
 
     <div class="row mb-3">
-        <div class="col-md-6">
+        <div class="col-md-7">
+            {{-- Tombol Baru --}}
             <a href="{{ route('admin.penggunaan.create') }}" class="btn btn-primary">+ Input Penggunaan Baru</a>
+            <a href="{{ route('admin.penggunaan.belum_input') }}" class="btn btn-info">Lihat Pelanggan Belum Diinput</a>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-5">
             <form action="{{ route('admin.penggunaan.index') }}" method="GET">
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="Cari pelanggan, bulan, tahun..." name="search"
@@ -50,16 +52,19 @@
             <tbody>
                 @forelse ($semua_penggunaan as $penggunaan)
                     <tr>
-                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $semua_penggunaan->firstItem() + $loop->index }}</td>
                         <td>{{ $penggunaan->pelanggan->nama_pelanggan ?? 'Pelanggan Dihapus' }}</td>
                         <td>{{ $penggunaan->bulan }} {{ $penggunaan->tahun }}</td>
                         <td>{{ $penggunaan->meter_awal }}</td>
                         <td>{{ $penggunaan->meter_akhir }}</td>
                         <td>
-                            {{-- LOGIKA BARU UNTUK KOLOM AKSI --}}
                             @if ($penggunaan->tagihan)
                                 @if ($penggunaan->tagihan->status == 'Lunas')
                                     <span class="badge bg-success">Sudah Lunas</span>
+                                @elseif ($penggunaan->tagihan->status == 'Menunggu Konfirmasi')
+                                    <span class="badge bg-warning me-1">Menunggu Konfirmasi</span>
+                                    <a href="{{ route('admin.pembayaran.konfirmasi.show', $penggunaan->tagihan) }}"
+                                        class="btn btn-primary btn-sm">Proses</a>
                                 @else
                                     <span class="badge bg-danger me-1">Belum Lunas</span>
                                     <a href="{{ route('admin.pembayaran.create', $penggunaan->tagihan) }}"
@@ -88,5 +93,9 @@
                 @endforelse
             </tbody>
         </table>
+    </div>
+
+    <div class="d-flex justify-content-center">
+        {{ $semua_penggunaan->appends(request()->query())->links() }}
     </div>
 @endsection

@@ -26,15 +26,17 @@
                     <select name="id_pelanggan" id="id_pelanggan" class="form-select" required>
                         <option value="">-- Pilih Pelanggan --</option>
                         @foreach ($semua_pelanggan as $pelanggan)
-                            <option value="{{ $pelanggan->id_pelanggan }}">{{ $pelanggan->nomor_meter }} -
-                                {{ $pelanggan->nama_pelanggan }}</option>
+                            {{-- Logika untuk auto-select pelanggan --}}
+                            <option value="{{ $pelanggan->id_pelanggan }}" @if($pelanggan->id_pelanggan == $pelanggan_id_terpilih)
+                            selected @endif>
+                                {{ $pelanggan->nomor_meter }} - {{ $pelanggan->nama_pelanggan }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="bulan" class="form-label">Bulan</label>
-                        {{-- PERUBAHAN DARI INPUT TEKS MENJADI DROPDOWN --}}
                         <select name="bulan" id="bulan" class="form-select" required>
                             <option value="">-- Pilih Bulan --</option>
                             <option value="Januari">Januari</option>
