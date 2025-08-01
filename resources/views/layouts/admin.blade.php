@@ -105,6 +105,12 @@
                                 Konfirmasi Pembayaran
                             </a>
                         </li>
+                        {{-- TAMBAHAN BARU DI SINI --}}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.keluhan.index') }}">
+                                Kelola Keluhan
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('admin.berita.index') }}">
                                 Kelola Berita

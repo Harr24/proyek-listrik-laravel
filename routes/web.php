@@ -13,6 +13,8 @@ use App\Http\Controllers\Admin\TagihanController;
 use App\Http\Controllers\Admin\PembayaranController as AdminPembayaranController;
 use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Pelanggan\PembayaranController as PelangganPembayaranController;
+use App\Http\Controllers\Admin\KeluhanController as AdminKeluhanController; //admin
+use App\Http\Controllers\Pelanggan\KeluhanController as PelangganKeluhanController; // Keluhan
 
 /*
 |--------------------------------------------------------------------------
@@ -60,18 +62,20 @@ Route::middleware('auth')->group(function () {
 
         // Rute untuk Konfirmasi Pembayaran
         Route::get('/konfirmasi-pembayaran', [AdminPembayaranController::class, 'konfirmasiIndex'])->name('pembayaran.konfirmasi.index');
-        // TAMBAHAN BARU: Rute untuk menampilkan detail konfirmasi
         Route::get('/konfirmasi-pembayaran/{tagihan}', [AdminPembayaranController::class, 'konfirmasiShow'])->name('pembayaran.konfirmasi.show');
-        // TAMBAHAN BARU: Rute untuk menyetujui pembayaran
         Route::post('/konfirmasi-pembayaran/approve/{tagihan}', [AdminPembayaranController::class, 'konfirmasiApprove'])->name('pembayaran.konfirmasi.approve');
-        // TAMBAHAN BARU: Rute untuk menolak pembayaran
         Route::post('/konfirmasi-pembayaran/reject/{tagihan}', [AdminPembayaranController::class, 'konfirmasiReject'])->name('pembayaran.konfirmasi.reject');
 
         // Rute untuk Laporan
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
         Route::get('/laporan/export', [LaporanController::class, 'exportExcel'])->name('laporan.export');
         //berita admin
-        Route::resource('berita', BeritaController::class)->except(['show']); // <-- TAMBAHKAN INI
+        Route::resource('berita', BeritaController::class)->except(['show']);
+        // KEluhan
+        Route::resource('keluhan', AdminKeluhanController::class)->only(['index', 'show']);
+        // PERBAIKAN: Menambahkan rute untuk balasan dan status dari admin
+        Route::post('/keluhan/{keluhan}/balas', [AdminKeluhanController::class, 'storeBalasan'])->name('keluhan.balas');
+        Route::post('/keluhan/{keluhan}/status', [AdminKeluhanController::class, 'updateStatus'])->name('keluhan.status');
     });
 
     // --- RUTE KHUSUS PELANGGAN ---
@@ -83,6 +87,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/pembayaran', [PelangganPembayaranController::class, 'store'])->name('pembayaran.store');
         //struk
         Route::get('/struk/{tagihan}', [PelangganPembayaranController::class, 'show'])->name('pembayaran.show');
+        // Keluhan
+        Route::resource('keluhan', PelangganKeluhanController::class)->only(['index', 'create', 'store', 'show']);
+        Route::post('/keluhan/{keluhan}/balas', [PelangganKeluhanController::class, 'storeBalasan'])->name('keluhan.balas');
     });
 
 });

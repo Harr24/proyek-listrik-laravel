@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.guest').
 
 @section('title', 'Daftar Harga')
 
@@ -17,7 +17,8 @@
                         <div class="card-body text-center">
                             <h1 class="card-title pricing-card-title">Rp
                                 {{ number_format($tarif->tarif_per_kwh, 0, ',', '.') }}<small
-                                    class="text-muted fw-light">/kWh</small></h1>
+                                    class="text-muted fw-light">/kWh</small>
+                            </h1>
                             <p class="mt-3 mb-4">
                                 Cocok untuk kebutuhan rumah tangga dan usaha kecil dengan penggunaan listrik yang efisien.
                             </p>

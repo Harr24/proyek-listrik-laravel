@@ -43,10 +43,10 @@ class PelangganController extends Controller
      */
     public function store(Request $request)
     {
-        // PERUBAHAN VALIDASI DI SINI
+        // PERBAIKAN VALIDASI DI SINI
         $request->validate([
-            // Nama pelanggan harus huruf/spasi dan tidak boleh sama
-            'nama_pelanggan' => 'required|string|alpha_spaces|max:255|unique:pelanggans,nama_pelanggan',
+            // Mengganti alpha_spaces dengan regex untuk huruf dan spasi
+            'nama_pelanggan' => 'required|string|regex:/^[\pL\s\-]+$/u|max:255|unique:pelanggans,nama_pelanggan',
             'nomor_meter' => 'required|numeric|digits_between:11,12|unique:pelanggans,nomor_meter',
             'alamat' => 'required|string',
             'id_tarif' => 'required|exists:tarifs,id_tarif',
@@ -90,12 +90,12 @@ class PelangganController extends Controller
      */
     public function update(Request $request, Pelanggan $pelanggan)
     {
-        // PERUBAHAN VALIDASI DI SINI
+        // PERBAIKAN VALIDASI DI SINI
         $request->validate([
             'id_tarif' => 'required|exists:tarifs,id_tarif',
             'nomor_meter' => 'required|numeric|digits_between:11,12|unique:pelanggans,nomor_meter,' . $pelanggan->id_pelanggan . ',id_pelanggan',
-            // Nama pelanggan harus huruf/spasi dan unik, kecuali untuk data yang sedang diedit
-            'nama_pelanggan' => 'required|string|alpha_spaces|max:255|unique:pelanggans,nama_pelanggan,' . $pelanggan->id_pelanggan . ',id_pelanggan',
+            // Mengganti alpha_spaces dengan regex untuk huruf dan spasi
+            'nama_pelanggan' => 'required|string|regex:/^[\pL\s\-]+$/u|max:255|unique:pelanggans,nama_pelanggan,' . $pelanggan->id_pelanggan . ',id_pelanggan',
             'alamat' => 'required|string',
         ]);
 

@@ -12,25 +12,46 @@ class PenggunaanController extends Controller
 {
     public function index(Request $request)
     {
+        // LOGIKA BARU UNTUK FILTER YANG LEBIH SPESIFIK
         $query = Penggunaan::with(['pelanggan', 'tagihan']);
 
-        if ($request->has('search') && $request->input('search') != '') {
-            $search = $request->input('search');
-            $query->where('bulan', 'like', '%' . $search . '%')
-                ->orWhere('tahun', 'like', '%' . $search . '%')
-                ->orWhereHas('pelanggan', function ($q) use ($search) {
-                    $q->where('nama_pelanggan', 'like', '%' . $search . '%')
-                        ->orWhere('nomor_meter', 'like', '%' . $search . '%');
+        // Filter berdasarkan nama pelanggan
+        if ($request->filled('search_nama')) {
+            $search_nama = $request->input('search_nama');
+            $query->whereHas('pelanggan', function ($q) use ($search_nama) {
+                $q->where('nama_pelanggan', 'like', '%' . $search_nama . '%');
+            });
+        }
+
+        // Filter berdasarkan bulan
+        if ($request->filled('bulan')) {
+            $query->where('bulan', $request->input('bulan'));
+        }
+
+        // Filter berdasarkan tahun
+        if ($request->filled('tahun')) {
+            $query->where('tahun', $request->input('tahun'));
+        }
+
+        // Filter berdasarkan status tagihan
+        if ($request->filled('status')) {
+            $status = $request->input('status');
+            if ($status == 'Belum Dibuat') {
+                // Cari penggunaan yang BELUM punya relasi tagihan
+                $query->doesntHave('tagihan');
+            } else {
+                // Cari penggunaan yang SUDAH punya relasi tagihan dengan status tertentu
+                $query->whereHas('tagihan', function ($q) use ($status) {
+                    $q->where('status', $status);
                 });
+            }
         }
 
         $semua_penggunaan = $query->paginate(10);
 
-        // Logika untuk daftar tugas sudah dipindahkan
         return view('admin.penggunaan.index', compact('semua_penggunaan'));
     }
 
-    // Method baru khusus untuk halaman "Belum Diinput"
     public function belumInputIndex(Request $request)
     {
         $daftarBulan = [
@@ -48,7 +69,6 @@ class PenggunaanController extends Controller
             'December' => 'Desember'
         ];
 
-        // Ambil filter dari request, jika tidak ada, gunakan bulan & tahun saat ini
         $bulanInggris = Carbon::now()->format('F');
         $bulanIni = $request->input('bulan', $daftarBulan[$bulanInggris]);
         $tahunIni = $request->input('tahun', Carbon::now()->year);

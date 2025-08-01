@@ -49,4 +49,10 @@ class User extends Authenticatable
     {
         return $this->hasOne(Pelanggan::class, 'user_id', 'id');
     }
+
+    // TAMBAHAN BARU: Relasi ke model Keluhan
+    public function keluhan()
+    {
+        return $this->hasMany(Keluhan::class);
+    }
 }
