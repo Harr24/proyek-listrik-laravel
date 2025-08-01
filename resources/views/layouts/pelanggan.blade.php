@@ -8,19 +8,41 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f4f7f6;
+            background-color: #fdfaf5;
+            /* warna natural beige */
+            color: #5B3A29;
+            /* coklat gelap */
+        }
+
+        .navbar-custom {
+            background: linear-gradient(135deg, #5B3A29, #A76D4D, #C2B280);
+        }
+
+        .navbar-custom .navbar-brand,
+        .navbar-custom .nav-link {
+            color: #fdfaf5 !important;
+        }
+
+        .navbar-custom .nav-link:hover,
+        .navbar-custom .nav-item.active .nav-link {
+            color: #DBCAB2 !important;
+        }
+
+        .navbar-toggler-icon {
+            filter: invert(1);
         }
     </style>
     @stack('styles')
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-custom shadow-sm">
         <div class="container">
             <a class="navbar-brand" href="{{ route('home') }}">PT Harrycahayarumah</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
@@ -34,8 +56,10 @@
                             data-bs-toggle="dropdown" aria-expanded="false">
                             {{ Auth::user()->name }}
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="{{ route('pelanggan.dashboard') }}">Dashboard</a></li>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="{{ route('pelanggan.dashboard') }}">Dashboard</a>
+                            </li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
@@ -45,7 +69,7 @@
                                     Logout
                                 </a>
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                    style="display: none;">
+                                    style="display:none;">
                                     @csrf
                                 </form>
                             </li>
@@ -55,11 +79,13 @@
             </div>
         </div>
     </nav>
+
     <main class="py-4">
         <div class="container">
             @yield('content')
         </div>
     </main>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     @stack('scripts')
 </body>

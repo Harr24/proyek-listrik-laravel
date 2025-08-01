@@ -4,18 +4,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Aplikasi Listrik') - PT Harrycahayarumah</title>
+    <title>@yield('title', 'Aplikasi Listrik') – PT Harrycahayarumah</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f4f7f6;
+            background-color: #fdfaf5;
+            /* beige natural sesuai tema */
+            color: #5B3A29;
+            /* coklat earthy untuk teks */
+        }
+
+        /* Navbar natural theme */
+        .navbar-custom {
+            background: linear-gradient(135deg, #5B3A29 0%, #A76D4D 50%, #C2B280 100%);
+        }
+
+        .navbar-custom .navbar-brand,
+        .navbar-custom .nav-link {
+            color: #fdfaf5 !important;
+        }
+
+        .navbar-custom .nav-link:hover,
+        .navbar-custom .nav-item.active .nav-link {
+            color: #DBCAB2 !important;
+        }
+
+        .navbar-custom .navbar-toggler {
+            border-color: rgba(255, 255, 255, 0.7);
+        }
+
+        .navbar-custom .navbar-toggler-icon {
+            filter: invert(1);
         }
     </style>
     @stack('styles')
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-custom shadow-sm">
         <div class="container">
             <a class="navbar-brand" href="{{ route('home') }}">PT Harrycahayarumah</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -36,7 +62,7 @@
                                 data-bs-toggle="dropdown" aria-expanded="false">
                                 {{ Auth::user()->name }}
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <ul class="dropdown-menu dropdown-menu-end">
                                 @if(Auth::user()->role == 'admin')
                                     <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}">Dashboard Admin</a></li>
                                 @else
@@ -52,7 +78,7 @@
                                         Logout
                                     </a>
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                        style="display: none;">
+                                        style="display:none;">
                                         @csrf
                                     </form>
                                 </li>
@@ -63,11 +89,13 @@
             </div>
         </div>
     </nav>
+
     <main class="py-4">
         <div class="container">
             @yield('content')
         </div>
     </main>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     @stack('scripts')
 </body>
