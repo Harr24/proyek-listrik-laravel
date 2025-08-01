@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Tagihan;
 use App\Models\Penggunaan;
+use App\Models\Tarif; // Pastikan ini ada
 use Illuminate\Http\Request;
 
 class TagihanController extends Controller
@@ -41,6 +42,14 @@ class TagihanController extends Controller
             });
         }
 
+        // Filter berdasarkan jenis daya (tarif)
+        if ($request->filled('id_tarif')) {
+            $id_tarif = $request->input('id_tarif');
+            $query->whereHas('penggunaan.pelanggan', function ($q) use ($id_tarif) {
+                $q->where('id_tarif', $id_tarif);
+            });
+        }
+
         // Filter berdasarkan status
         if ($request->filled('status')) {
             $status = $request->input('status');
@@ -48,9 +57,11 @@ class TagihanController extends Controller
         }
 
         $semua_tagihan = $query->paginate(10);
-        // AKHIR DARI LOGIKA BARU
 
-        return view('admin.tagihan.index', compact('semua_tagihan'));
+        // Ambil semua data tarif untuk dropdown
+        $semua_tarif = Tarif::all();
+
+        return view('admin.tagihan.index', compact('semua_tagihan', 'semua_tarif'));
     }
 
     /**

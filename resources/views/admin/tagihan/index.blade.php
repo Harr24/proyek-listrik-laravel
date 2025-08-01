@@ -19,7 +19,7 @@
         <div class="card-body">
             <form action="{{ route('admin.tagihan.index') }}" method="GET">
                 <div class="row g-3 align-items-end">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label for="search_nama" class="form-label">Cari Nama Pelanggan</label>
                         <input type="text" class="form-control" id="search_nama" name="search_nama"
                             value="{{ request('search_nama') }}">
@@ -47,6 +47,17 @@
                         <input type="number" class="form-control" id="tahun" name="tahun" value="{{ request('tahun') }}"
                             placeholder="Contoh: 2024">
                     </div>
+                    {{-- Dropdown baru untuk Jenis Daya --}}
+                    <div class="col-md-2">
+                        <label for="id_tarif" class="form-label">Jenis Daya</label>
+                        <select name="id_tarif" id="id_tarif" class="form-select">
+                            <option value="">Semua</option>
+                            @foreach ($semua_tarif as $tarif)
+                                <option value="{{ $tarif->id_tarif }}" @if(request('id_tarif') == $tarif->id_tarif) selected
+                                @endif>{{ $tarif->daya }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     <div class="col-md-2">
                         <label for="status" class="form-label">Status</label>
                         <select name="status" id="status" class="form-select">
@@ -58,7 +69,7 @@
                             <option value="Lunas" @if(request('status') == 'Lunas') selected @endif>Lunas</option>
                         </select>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <button class="btn btn-primary w-100" type="submit">Filter</button>
                     </div>
                 </div>

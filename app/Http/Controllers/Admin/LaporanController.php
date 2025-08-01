@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Tagihan;
+use App\Models\Tarif; // Pastikan ini ada
 
 class LaporanController extends Controller
 {
@@ -16,25 +17,30 @@ class LaporanController extends Controller
         $bulan = $request->input('bulan');
         $tahun = $request->input('tahun');
 
-        // Mulai query ke tabel tagihan
         $query = Tagihan::query()->with('penggunaan.pelanggan');
 
-        // Terapkan filter jika bulan dan tahun diisi
         if ($bulan && $tahun) {
             $query->whereHas('penggunaan', function ($q) use ($bulan, $tahun) {
                 $q->where('bulan', $bulan)->where('tahun', $tahun);
             });
         }
 
+        // Filter berdasarkan jenis daya (tarif)
+        if ($request->filled('id_tarif')) {
+            $id_tarif = $request->input('id_tarif');
+            $query->whereHas('penggunaan.pelanggan', function ($q) use ($id_tarif) {
+                $q->where('id_tarif', $id_tarif);
+            });
+        }
+
         $semua_tagihan = $query->get();
-
-        // Hitung total pendapatan hanya dari tagihan yang lunas
         $total_pendapatan = $semua_tagihan->where('status', 'Lunas')->sum('total_bayar');
-
-        // TAMBAHAN BARU: Hitung jumlah pelanggan unik dari data tagihan yang ada
         $jumlah_pelanggan = $semua_tagihan->pluck('penggunaan.pelanggan.id_pelanggan')->unique()->count();
 
-        return view('admin.laporan.index', compact('semua_tagihan', 'total_pendapatan', 'bulan', 'tahun', 'jumlah_pelanggan'));
+        // Ambil semua data tarif untuk dropdown
+        $semua_tarif = Tarif::all();
+
+        return view('admin.laporan.index', compact('semua_tagihan', 'total_pendapatan', 'bulan', 'tahun', 'jumlah_pelanggan', 'semua_tarif'));
     }
 
     /**
@@ -50,6 +56,14 @@ class LaporanController extends Controller
         if ($bulan && $tahun) {
             $query->whereHas('penggunaan', function ($q) use ($bulan, $tahun) {
                 $q->where('bulan', $bulan)->where('tahun', $tahun);
+            });
+        }
+
+        // Filter berdasarkan jenis daya (tarif) untuk export
+        if ($request->filled('id_tarif')) {
+            $id_tarif = $request->input('id_tarif');
+            $query->whereHas('penggunaan.pelanggan', function ($q) use ($id_tarif) {
+                $q->where('id_tarif', $id_tarif);
             });
         }
 
